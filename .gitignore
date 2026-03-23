@@ -1,0 +1,68 @@
+# --------------------------------------------------
+# Node / TypeScript / Build
+# --------------------------------------------------
+node_modules/
+dist/
+build/
+coverage/
+.tmp/
+temp/
+
+# TS build info
+*.tsbuildinfo
+
+# --------------------------------------------------
+# Environment / Secrets
+# --------------------------------------------------
+.env
+.env.local
+.env.dev
+.env.test
+.env.production
+
+# --------------------------------------------------
+# Logs
+# --------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --------------------------------------------------
+# OS / Editor
+# --------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# WebStorm / JetBrains
+.idea/
+
+# --------------------------------------------------
+# Prisma
+# --------------------------------------------------
+# Archivo generado (puede ignorarse si no lo editás manualmente)
+prisma/dev.db
+prisma/*.sqlite
+prisma/*.db-journal
+
+# Cliente generado por Prisma (si no querés versionarlo)
+# prisma/generated/
+
+# --------------------------------------------------
+# Tests
+# --------------------------------------------------
+coverage/
+.nyc_output/
+
+# --------------------------------------------------
+# Otros
+# --------------------------------------------------
+*.swp
+*.swo
+*.bak

@@ -1,0 +1,90 @@
+gym-app/
+├─ src/
+│  ├─ domain/                         # Reglas de negocio puras (sin framework)
+│  │  ├─ users/
+│  │  │  ├─ User.ts
+│  │  │  ├─ UserId.ts
+│  │  │  └─ UserRole.ts
+│  │  ├─ exercises/
+│  │  │  ├─ Exercise.ts
+│  │  │  └─ MuscleGroup.ts
+│  │  ├─ workouts/
+│  │  │  ├─ Workout.ts
+│  │  │  └─ WorkoutExercise.ts
+│  │  └─ plans/
+│  │     ├─ Plan.ts
+│  │     └─ PlanWeek.ts
+│  │
+│  ├─ application/                    # Casos de uso y puertos
+│  │  ├─ users/
+│  │  │  ├─ ports/
+│  │  │  │  ├─ UserRepository.ts
+│  │  │  │  └─ PasswordHasherPort.ts
+│  │  │  └─ usecases/
+│  │  │     ├─ RegisterUser.ts
+│  │  │     ├─ LoginUser.ts
+│  │  │     └─ GetProfile.ts
+│  │  ├─ exercises/
+│  │  │  ├─ ports/ExerciseRepository.ts
+│  │  │  └─ usecases/{CreateExercise.ts,ListExercises.ts}
+│  │  ├─ workouts/
+│  │  │  ├─ ports/WorkoutRepository.ts
+│  │  │  └─ usecases/{CreateWorkout.ts,AddExerciseToWorkout.ts,GetWorkout.ts}
+│  │  └─ plans/
+│  │     ├─ ports/PlanRepository.ts
+│  │     └─ usecases/{CreatePlan.ts,AssignPlanToUser.ts,GetPlan.ts}
+│  │
+│  ├─ infrastructure/                 # Adaptadores y frameworks
+│  │  ├─ http/                        # Capa web (Express)
+│  │  │  ├─ server.ts
+│  │  │  ├─ routes/
+│  │  │  │  ├─ auth.routes.ts
+│  │  │  │  ├─ users.routes.ts
+│  │  │  │  ├─ exercises.routes.ts
+│  │  │  │  └─ workouts.routes.ts
+│  │  │  ├─ controllers/
+│  │  │  │  ├─ AuthController.ts
+│  │  │  │  ├─ UsersController.ts
+│  │  │  │  ├─ ExercisesController.ts
+│  │  │  │  └─ WorkoutsController.ts
+│  │  │  └─ middleware/
+│  │  │     ├─ auth.ts
+│  │  │     └─ errorHandler.ts
+│  │  ├─ persistence/                 # DB adapters (ej: Prisma/TypeORM/Mongoose)
+│  │  │  ├─ prisma/
+│  │  │  │  ├─ schema.prisma
+│  │  │  │  └─ PrismaClientFactory.ts
+│  │  │  └─ repositories/
+│  │  │     ├─ PrismaUserRepository.ts
+│  │  │     ├─ PrismaExerciseRepository.ts
+│  │  │     └─ PrismaWorkoutRepository.ts
+│  │  ├─ security/
+│  │  │  ├─ JwtService.ts
+│  │  │  └─ BcryptHasher.ts
+│  │  └─ mappers/                     # Mapear dominio ⇄ persistencia/DTO
+│  │     ├─ user.mapper.ts
+│  │     └─ workout.mapper.ts
+│  │
+│  ├─ config/                         # Wiring e infraestructura transversal
+│  │  ├─ env.ts
+│  │  └─ container.ts                 # Inyección manual (o inversify/tsyringe)
+│  │
+│  ├─ shared/                         # Utilidades compartidas (opc.)
+│  │  ├─ Result.ts
+│  │  └─ errors.ts
+│  │
+│  ├─ types/                          # Tipos globales
+│  │  └─ express/index.d.ts           # Extiende Request (req.auth, etc.)
+│  │
+│  └─ main.ts                         # Arranque de la app
+│
+├─ test/
+│  ├─ unit/                           # Tests de dominio/casos de uso
+│  └─ integration/                    # Tests HTTP/DB
+│
+├─ prisma/                            # (opcional) si preferís separar schema
+│  └─ schema.prisma
+├─ .env
+├─ package.json
+├─ tsconfig.json
+└─ eslint/prettier configs (opc.)
