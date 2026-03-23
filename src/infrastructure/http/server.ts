@@ -10,5 +10,5 @@ app.use(express.json());
 
 // Rutas
 app.get("/", (req, res) => {
-  res.send("Hola mundo");
+  res.send("Gymplanner API");
 });

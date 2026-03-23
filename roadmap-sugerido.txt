@@ -1,0 +1,176 @@
+🥇 Orden recomendado de features (vertical slices)
+1) Auth + Perfil mínimo (Login/Register + GetProfile)
+
+Valor: convierte visitantes en usuarios y te permite personalizar.
+Scope:
+
+POST /auth/register
+POST /auth/login
+GET /users/me (perfil mínimo: id, email, role)
+
+
+Dominio mínimo:
+
+User, UserId, UserRole
+
+
+Puertos:
+
+UserRepository, PasswordHasherPort (ya los tenés)
+
+
+Eventos:
+
+UserRegistered
+
+
+Criterios de aceptación (CA):
+
+Registro con email único → 201
+Login correcto devuelve JWT → 200
+JWT inválido/expirado → 401
+
+
+Tests:
+
+Unit: RegisterUser, LoginUser (paths happy/sad)
+Integration: endpoints con mock de DB y hasher
+
+
+Razón para 1º: desbloquea el resto. Necesitás identidad para toda entidad “propietaria”.
+
+
+2) Catálogo de ejercicios (List + Create admin)
+
+Valor: materiales básicos para armar workouts coherentes.
+Scope:
+
+GET /exercises?muscle=BACK|LEGS|…
+POST /exercises (solo ROLE_ADMIN al inicio)
+
+
+Dominio:
+
+Exercise, MuscleGroup
+
+
+Eventos:
+
+ExerciseCreated
+
+
+CA:
+
+Listado filtra por músculo
+Crear con validación de duplicados por (nombre + músculo)
+
+
+Tests:
+
+Unit: CreateExercise, ListExercises
+Integration: RBAC por role, filtros
+
+
+Razón para 2º: permite armar workouts sin inventar ejercicios on-the-fly.
+
+
+3) Crear workout y agregar ejercicios (CRUD básico de Workout)
+
+Valor: el usuario arma su rutina (lo que más “engancha”).
+Scope:
+
+POST /workouts (nombre, objetivo opcional)
+POST /workouts/:id/exercises (exerciseId, sets, reps, tempo, notes)
+GET /workouts/:id
+
+
+Dominio:
+
+Workout, WorkoutExercise
+
+
+Eventos:
+
+WorkoutCreated, ExerciseAddedToWorkout
+
+
+CA:
+
+No permitir agregar el mismo ejercicio 2 veces sin intención (decidir: merge vs duplicado permitido con variación)
+Validar que exerciseId exista
+
+
+Tests:
+
+Unit: CreateWorkout, AddExerciseToWorkout, GetWorkout
+Integration: ownership (un usuario no ve el workout de otro)
+
+
+Razón para 3º: ya permite “construir” algo propio.
+
+
+4) Registrar sesión de entrenamiento (logging)
+(Primer diferencial real – pasar del plan al log)
+
+Valor: convierte el plan en datos; habilita progreso.
+Scope:
+
+POST /workouts/:id/sessions/start
+POST /workouts/:id/sessions/:sessionId/sets (exerciseId, reps, weight, rir/pe opcional)
+POST /workouts/:id/sessions/:sessionId/finish
+GET /workouts/:id/sessions/:sessionId
+
+
+Dominio:
+
+WorkoutSession, PerformedSet (puede vivir dentro de workouts/ al inicio)
+
+
+Eventos:
+
+WorkoutSessionStarted, SetLogged, WorkoutSessionFinished
+
+
+CA:
+
+No permitir finish sin sets (decisión: permitir “sesión vacía” o no)
+Solo owner puede loguear
+Timestamps coherentes (start < finish)
+
+
+Tests:
+
+Unit: invariantes de sesión (no agregar sets después de finish)
+Integration: flujo completo start→sets→finish
+
+
+
+
+5) Progreso básico (PRs / volumen por músculo)
+
+Valor: feedback al usuario = retención.
+Scope:
+
+GET /users/me/stats (ultimos PRs por ejercicio, volumen semanal por MuscleGroup)
+
+
+Dominio:
+
+Consulta que se apoya en logs; podés empezar con read model simple.
+
+
+Eventos:
+
+Se consume de SetLogged / WorkoutSessionFinished
+
+
+CA:
+
+PR = max(weight) por ejercicio
+Volumen = Σ(reps * weight) por músculo (semana ISO actual)
+
+
+Tests:
+
+Unit: agregación a partir de sets
+Integration: dataset mínimo y verificación de métricas
